@@ -6,31 +6,21 @@ import {
   FaMobileAlt,
   FaArrowUp,
 } from "react-icons/fa";
+import { MdOutlineArrowBackIos } from "react-icons/md";
 import { HashLink as Link } from "react-router-hash-link";
 import { useLocation } from "react-router-dom";
 
 const FooterLinks = [
-  {
-    title: "בית",
-    link: "/",
-  },
-  {
-    title: "עלינו",
-    link: "/#about",
-  },
-  {
-    title: "צור קשר",
-    link: "/#contact",
-  },
-  {
-    title: "גלריה",
-    link: "/gallery",
-  },
+  { title: "בית", link: "/" },
+  { title: "עלינו", link: "/#about" },
+  { title: "צור קשר", link: "/#contact" },
+  { title: "גלריה", link: "/gallery" },
 ];
 
 const Footer = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const location = useLocation(); // הוספה כאן
+  const [isMapVisible, setIsMapVisible] = useState(false); // מצב טעינת המפה
+  const location = useLocation();
 
   const toggleVisibility = () => {
     if (window.pageYOffset > 300) {
@@ -41,9 +31,14 @@ const Footer = () => {
   };
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleMapVisibility = (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        setIsMapVisible(true); // טען את המפה רק כאשר היא נכנסת לפריים
+      }
     });
   };
 
@@ -56,9 +51,22 @@ const Footer = () => {
 
   useEffect(() => {
     if (location.hash === "") {
-      scrollToTop(); // גלול לראש העמוד רק כאשר אין עוגן בנתיב
+      scrollToTop();
     }
   }, [location]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleMapVisibility, {
+      threshold: 0.1, // טען את המפה כאשר לפחות 10% ממנה בפריים
+    });
+
+    const mapElement = document.getElementById("map");
+    if (mapElement) observer.observe(mapElement);
+
+    return () => {
+      if (mapElement) observer.unobserve(mapElement);
+    };
+  }, []);
 
   return (
     <div className="bg-gray-100 dark:bg-dark mt-14 rounded-t-3xl relative">
@@ -102,25 +110,41 @@ const Footer = () => {
                   key={link.title}
                   className="cursor-pointer hover:translate-x-1 duration-300 hover:!text-primary space-x-1 text-gray-500 dark:text-gray-200"
                 >
-                  <Link smooth to={link.link}>
-                    <span>&#11162;</span>
+                  <Link
+                    smooth
+                    to={link.link}
+                    className="flex items-center space-x-2"
+                  >
+                    <span className="ml-1">
+                      <MdOutlineArrowBackIos />
+                    </span>{" "}
                     <span>{link.title}</span>
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
-          {/* iframe בצד שמאל */}
+          {/* מפת גוגל */}
           <div className="py-8 px-4">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3303.9448422075134!2d-118.25300528497246!3d34.05223538060824!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c7b4a7f91f5b%3A0x501f0b0f78e8e299!2sBeersheba!5e0!3m2!1sen!2sil!4v1641583469693!5m2!1sen!2sil"
-              width="300"
-              height="200"
-              style={{ border: 0 }}
-              allowFullScreen=""
-              loading="lazy"
-              title="Google Maps Location"
-            ></iframe>
+            {!isMapVisible ? (
+              <div
+                className="w-[300px] h-[200px] bg-gray-300 dark:bg-gray-600 animate-pulse"
+                id="map-placeholder"
+              >
+                {/* מציג שלד בזמן שהמפה נטענת */}
+              </div>
+            ) : (
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3303.9448422075134!2d-118.25300528497246!3d34.05223538060824!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c7b4a7f91f5b%3A0x501f0b0f78e8e299!2sBeersheba!5e0!3m2!1sen!2sil!4v1641583469693!5m2!1sen!2sil"
+                width="300"
+                height="200"
+                style={{ border: 0 }}
+                allowFullScreen=""
+                loading="lazy"
+                title="Google Maps Location"
+                id="map"
+              ></iframe>
+            )}
           </div>
         </div>
         {/* שורה נוספת עם כל הזכויות שמורות */}

@@ -5,9 +5,24 @@ import AOS from "aos";
 import { HashLink as Link } from "react-router-hash-link";
 
 const Hero = ({ theme }) => {
+  const [currentImage, setCurrentImage] = useState(camLight);
+
   useEffect(() => {
+    // Preload both images
+    const preloadImage = (src) => {
+      const img = new Image();
+      img.src = src;
+    };
+
+    preloadImage(camLight);
+    preloadImage(camDark);
+
+    // Change the image based on theme
+    const newImage = theme === "dark" ? camDark : camLight;
+    setCurrentImage(newImage);
+
     AOS.refresh();
-  });
+  }, [theme]);
 
   return (
     <div className="dark:bg-black dark:text-white duration-300 direction-rtl">
@@ -20,12 +35,12 @@ const Hero = ({ theme }) => {
             className="order-1 sm:order-2"
           >
             <img
-              src={theme === "dark" ? camDark : camLight}
+              src={currentImage}
               alt=""
               className="sm:scale-125 relative -z-10 max-h-[600px] drop-shadow-[2px_20px_6px_rgba(0,0,0,0.50)]"
             />
           </div>
-          <div className="space-y-5 order-2 sm:order-1 ">
+          <div className="space-y-5 order-2 sm:order-1">
             <p data-aos="fade-up" className="text-primary text-2xl mb-[-18px]">
               פוקוס, פרספקטיבה, מקצוענות.
             </p>
