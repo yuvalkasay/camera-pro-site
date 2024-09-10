@@ -6,9 +6,9 @@ import { HashLink as Link } from "react-router-hash-link";
 
 const Hero = ({ theme }) => {
   const [currentImage, setCurrentImage] = useState(camLight);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
-    // Preload both images
     const preloadImage = (src) => {
       const img = new Image();
       img.src = src;
@@ -17,9 +17,16 @@ const Hero = ({ theme }) => {
     preloadImage(camLight);
     preloadImage(camDark);
 
-    // Change the image based on theme
     const newImage = theme === "dark" ? camDark : camLight;
-    setCurrentImage(newImage);
+
+    // When the theme changes, preload and switch the image
+    setImageLoaded(false); // Hide the image until it's fully loaded
+    const img = new Image();
+    img.src = newImage;
+    img.onload = () => {
+      setCurrentImage(newImage);
+      setImageLoaded(true); // Show the image once loaded
+    };
 
     AOS.refresh();
   }, [theme]);
@@ -37,7 +44,9 @@ const Hero = ({ theme }) => {
             <img
               src={currentImage}
               alt=""
-              className="sm:scale-125 relative -z-10 max-h-[600px] drop-shadow-[2px_20px_6px_rgba(0,0,0,0.50)]"
+              className={`sm:scale-125 relative -z-10 max-h-[600px] drop-shadow-[2px_20px_6px_rgba(0,0,0,0.50)] transition-opacity duration-500 ${
+                imageLoaded ? "opacity-100" : "opacity-0"
+              }`}
             />
           </div>
           <div className="space-y-5 order-2 sm:order-1">
