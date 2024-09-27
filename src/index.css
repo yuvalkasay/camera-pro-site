@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* @import url("https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"); */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  /* font-family: "Rubik", sans-serif; */
+}
+
+h1 {
+  /* font-family: 'Rubik', sans-serif; */
+}
+
+@layer components {
+  .link {
+    @apply cursor-pointer hover:underline;
+  }
+  .button-outline {
+    @apply rounded-md border-2 border-primary hover:bg-primary/80 hover:text-black duration-500 py-2 px-6 text-primary tracking-wider;
+  }
+}
+
+@layer utilities {
+  .direction-rtl {
+    direction: rtl;
+  }
+  .direction-ltr {
+    direction: ltr;
+  }
+}
+
+/* Tailwind עם צבעים מותאמים */
+.swiper-pagination-bullet {
+  @apply bg-black; /* צבע במצב רגיל */
+}
+
+.dark .swiper-pagination-bullet {
+  @apply bg-white; /* צבע במצב דארק */
+}
+
+/* כאשר הנקודה אקטיבית */
+.swiper-pagination-bullet-active {
+  @apply bg-primary; /* צבע הנקודה הפעילה במצב רגיל */
+}
+
+.dark .swiper-pagination-bullet-active {
+  @apply bg-primary; /* צבע הנקודה הפעילה במצב דארק */
+}
+
+/* חיצים במצב רגיל */
+.swiper-button-next,
+.swiper-button-prev {
+  @apply text-black; /* צבע הרקע של החיצים וצבע האייקון */
+}
+
+/* חיצים במצב דארק */
+.dark .swiper-button-next,
+.dark .swiper-button-prev {
+  @apply bg-black text-primary; /* צבע הרקע והאייקון במצב דארק */
+}
+
+/* סגנון נוסף כמו שינוי בגבולות */
+.swiper-button-next,
+.swiper-button-prev {
+  @apply rounded-full; /* עיגול לחיצים */
+}
+
